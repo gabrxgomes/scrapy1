@@ -1,5 +1,5 @@
 from selenium import webdriver
-from selenium.common.exceptions import NoSuchElementException
+from selenium.common import NoSuchElementException
 from selenium.webdriver.common.by import By
 from selenium.webdriver.chrome.service import Service as ChromeService
 from webdriver_manager.chrome import ChromeDriverManager
@@ -8,25 +8,24 @@ import openpyxl
 
 options = webdriver.ChromeOptions()
 options.headless = True
-driver = webdriver.Chrome(service=ChromeService(
-    ChromeDriverManager().install()), options=options)
+driver = webdriver.Chrome(service=ChromeService(ChromeDriverManager().install()), options=options)
 
-# Load target website
-url = 'https://www.dafiti.com.br/roupas-masculinas/camisas/'
+# site alvo
+url = 'https://www.magazineluiza.com.br/celulares-e-smartphones/l/te/'
 
-# Get website content
+# obter o conteudo do mesmo
 driver.get(url)
 
-# Instantiate items
+# instanciando a minha lista de itens
 items = []
 
-# Instantiate height of webpage
+# Instanciar altura da página
 last_height = driver.execute_script('return document.body.scrollHeight')
 
-# Set target count
+# Definir contagem
 itemTargetCount = 25
 
-# Scroll to bottom of webpage
+# Escrolar pagina até o fim
 while itemTargetCount > len(items):
     driver.execute_script('window.scrollTo(0, document.body.scrollHeight);')
 
@@ -41,14 +40,19 @@ while itemTargetCount > len(items):
     last_height = new_height
 
     # Select elements by XPath
-    product_elements = driver.find_elements(By.CLASS_NAME, "product-box-detail")
+    product_elements = driver.find_elements(By.XPATH, '//div[@data-testid="product-card-content"]')
     for product in product_elements:
         try:
-            name = product.find_element(By.CLASS_NAME, "product-box-title").text
-            price_from = product.find_element(By.CLASS_NAME, "product-box-price-from").text
-            price_to_element = product.find_element(By.CLASS_NAME, "product-box-price-to")
-            price_to = price_to_element.text if price_to_element else "Preço não disponível"
-            items.append({"name": name, "price_from": price_from, "price_to": price_to})
+            name_element = product.find_element(By.XPATH, './/h2[@data-testid="product-title"]')
+            name = name_element.text.strip()
+
+            price_original_element = product.find_element(By.XPATH, './/p[@data-testid="price-original"]')
+            price_original = price_original_element.text.strip()
+
+            price_value_element = product.find_element(By.XPATH, './/p[@data-testid="price-value"]')
+            price_value = price_value_element.text.strip()
+
+            items.append({"name": name, "price_original": price_original, "price_value": price_value})
         except NoSuchElementException:
             print("Elemento não encontrado. Pulando para o próximo.")
 
@@ -56,24 +60,24 @@ while itemTargetCount > len(items):
 driver.quit()
 
 # Saving to Excel file
-excel_file = "dafiti_products1.xlsx"
+excel_file = "magazineluiza_products.xlsx"
 
 # Create a workbook and select the active sheet
 workbook = openpyxl.Workbook()
 sheet = workbook.active
-sheet.title = "Dafiti Products"
+sheet.title = "Magazine Luiza Products"
 
 # Write headers
 sheet["A1"] = "Name"
-sheet["B1"] = "Price From"
-sheet["C1"] = "Price To"
+sheet["B1"] = "Price Original"
+sheet["C1"] = "Price Value"
 
 # Write data
 row = 2
 for item in items:
     sheet[f"A{row}"] = item["name"]
-    sheet[f"B{row}"] = item["price_from"]
-    sheet[f"C{row}"] = item["price_to"]
+    sheet[f"B{row}"] = item["price_original"]
+    sheet[f"C{row}"] = item["price_value"]
     row += 1
 
 # Save workbook
