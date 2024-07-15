@@ -2,6 +2,8 @@ import requests
 from bs4 import BeautifulSoup
 import re
 
+#PESQUISA DE PELAVRAS CHAVE NA PÁGINA
+
 # URL do site que você quer fazer o scraping
 url = "https://www.dafiti.com.br/roupas-masculinas/camisas/"  # substitua pelo URL desejado
 
