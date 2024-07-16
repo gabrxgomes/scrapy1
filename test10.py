@@ -5,19 +5,21 @@ from bs4 import BeautifulSoup
 
 
 #TRATAMENTO DE EXCEÇÃO COM BEALTIFULSOUP
-def getTitle(url):
-    try:
+def getTitle(url): #definindo uma função
+    try: #tentar a conexão com a url passada como parametro
         html = urlopen(url)
     except HTTPError as e:
         return None
     try:
         bs = BeautifulSoup(html.read(), 'html.parser')
-        title = bs.body.h1
+        title = bs.body.h1 #acessando os niveis ate chegar no elemento que queremos que é o h1
     except AttributeError as e:
         return None
     return title
 title = getTitle('http://www.pythonscraping.com/pages/page1.html')
 if title == None:
     print('Title could not be found')
+
 else:
     print(title)
+    print('Success!')
