@@ -5,3 +5,6 @@ bs = BeautifulSoup(html, 'html.parser')
 for link in bs.find_all('a'):
     if 'href' in link.attrs:
         print(link.attrs['href'])
+
+
+#UMA FUNÇÃO DE COLETA DE DADOS SEM FILTRO NENHUM SOBRE LINKS
