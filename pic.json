@@ -1,0 +1,10 @@
+[
+  {
+    "IdVacancyTemplate": 1,
+    "Name": "Modelo Padrão"
+  },
+  {
+    "IdVacancyTemplate": 2,
+    "Name": "Modelo Técnico"
+  }
+]
